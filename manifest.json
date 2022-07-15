@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "OnFacts",
+  "description": "This chrome extension adds fun facts to the loading screen of Onshape",
+  "version": "1.0",
+  "icons": {
+    "16": "iconBig.png",
+    "48": "iconBig.png",
+    "128": "iconBig.png"
+  },
+  "content_scripts": [{
+    "matches": ["*://*.onshape.com/*"],
+    "js": ["content.js"]
+  }],
+  "web_accessible_resources": ["background.js"],
+
+
+
+  "browser_action": {
+    "default_icon": "iconLittle.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "<all_urls>"
+  ]
+}
