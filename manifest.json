@@ -13,7 +13,7 @@
     "matches": ["*://*.onshape.com/*"],
     "js": ["content.js"]
   }],
-  "web_accessible_resources": ["background.js"],
+  "web_accessible_resources": ["background.js", "trueFacts.json"],
 
 
 

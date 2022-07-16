@@ -1,0 +1,42 @@
+[
+  {
+    "Fact": "The James Webb Telescope is in orbit around the sun at Lagrange point 2 (L2).",
+    "Time": "SHORT",
+    "Source": "Nasa.gov",
+    "SourceURL": "https://webb.nasa.gov/content/about/orbit.html",
+    "SubmittedBy": "Gabriel Seltzer"
+  },
+  {
+    "Fact": "testFACT",
+    "Time": "SHORT",
+    "Source": "Gabriel Seltzer",
+    "SourceURL": "https://google.com",
+    "SubmittedBy": "Gabriel Seltzer"
+
+  },
+  {
+    "Fact": "Did you know? You can extrude a 2D sketch into a 3D shape!",
+    "Time": "SHORT",
+    "Source": "Onshape",
+    "SourceURL": "https://cad.onshape.com/help/Content/extrude.htm",
+    "SubmittedBy": "Parker Steele"
+
+  },
+  {
+    "Fact": "If Onshape is running slowly, just press alt-F4 to make it finish loading.",
+    "Time": "SHORT",
+    "Source": "Microsft",
+    "SourceURL": "https://archive.org/details/microsoft-windows-95/page/n89/mode/2up?q=alt",
+    "SubmittedBy": "Robert Gambee"
+
+  },
+  {
+    "Fact": "CAD stands for \"Computer Aided Design\"",
+    "Time": "SHORT",
+    "Source": "Merriam-Webster",
+    "SourceURL": "https://www.merriam-webster.com/dictionary/cad",
+    "SubmittedBy": "Parker Steele"
+
+    
+  }
+]
