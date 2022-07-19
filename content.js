@@ -36,11 +36,11 @@ function waitForElm(selector, prevData) {
 // }
 
 function getFact(previousResult) {
-  console.log(previousResult);
+  // console.log(previousResult);
   const values = Object.values(previousResult)
-  console.log(values);
+  // console.log(values);
   const fact = values[Math.floor(Math.random() * values.length)];
-  console.log(fact);
+  // console.log(fact);
   return fact;
 
 
@@ -62,9 +62,8 @@ const injectLoadingText = (previousResults ) => {
 }
 
 const url = chrome.runtime.getURL('./trueFacts.json');
-fetch(url)
-  .then((response) => response.json())
-  .then((data) => getFact(data))
-  .then((results) => waitForElm(triggerClassBig, results))
-  .then((fact, element) => injectLoadingText(fact, element));
-  // .then(makeDaDestructor)
+fetch(url).then((response) => response.json()).then((data) => getFact(data)).then((fact) => {
+  console.log(fact)
+  waitForElm(triggerClassBig, fact).then((fact, element) => injectLoadingText(fact, element));
+  waitForElm(triggerClassSmall, fact).then((fact, element) => injectLoadingText(fact, element));
+});
