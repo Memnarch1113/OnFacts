@@ -1,18 +1,21 @@
 
-const triggerClassBig = '.loading-progress-message';
-const triggerClassSmall = '.working-progress';
+const firstLoadingScreenClass = 'loading-progress-message';
+const secondLoadingScreenClass = 'spinner-holder-working';
+const loadingBackgroundClass = 'loading-progress-background';
+const loadingLittleSpinnerClass = 'os-spinner-medium os-spinner-spinning'
 
-function waitForElm(selector, prevData) {
+function waitForElm(elementClass, prevData) {
   return new Promise(resolve => {
+      const selector = `.${elementClass}`
       if (document.querySelector(selector)) {
         // return resolve(document.querySelector(selector));
-        return resolve([prevData, document.querySelector(selector)]);
+        return resolve([document.querySelector(selector), prevData]);
       }
 
       const observer = new MutationObserver(mutations => {
           if (document.querySelector(selector)) {
               // resolve(document.querySelector(selector));
-              resolve([prevData, document.querySelector(selector)]);
+              resolve([document.querySelector(selector), prevData]);
               observer.disconnect();
           }
       });
@@ -24,17 +27,6 @@ function waitForElm(selector, prevData) {
   });
 }
 
-// const getLoadingBox = async () => {
-//   console.log(`looking for '${triggerClass}'`);
-//   while(!document.querySelector(triggerClass)) {
-//     await new Promise(r => setTimeout(r, 500));
-//     console.log("still waiting...")
-//   }
-//   console.log(`'${triggerClass}' has shown up!`);
-//   return Resolve();
-
-// }
-
 function getFact(previousResult) {
   // console.log(previousResult);
   const values = Object.values(previousResult)
@@ -42,28 +34,41 @@ function getFact(previousResult) {
   const fact = values[Math.floor(Math.random() * values.length)];
   // console.log(fact);
   return fact;
-
-
-
 }
 
 const injectLoadingText = (previousResults ) => {
-  const fact = previousResults[0];
-  const loadingZone = previousResults[1];
-  const para = document.createElement('p');
-  para.textContent = `${fact.Fact}. - ${fact.Source}`;
-  para.style.bottom = '70px';
-  para.style.position = 'absolute';
-  para.style.right = '50%';
-  para.style.zIndex = '1003';
-  loadingZone.appendChild(para);
-  console.log("wow did it")
+  const loadingZone = previousResults[0];
+  const fact = previousResults[1];
+  const factText = document.createElement('p');
+  factText.textContent = `${fact.Fact}. - ${fact.Source}`;
+  factText.style.bottom = '70px';
+  // factText.style.position = 'absolute';
+  factText.style.right = '50%';
+  factText.style.zIndex = '1003';
+  loadingZone.appendChild(factText);
+  // console.log("wow did it")
   return Promise.resolve();
 }
 
 const url = chrome.runtime.getURL('./trueFacts.json');
 fetch(url).then((response) => response.json()).then((data) => getFact(data)).then((fact) => {
   console.log(fact)
-  waitForElm(triggerClassBig, fact).then((fact, element) => injectLoadingText(fact, element));
-  waitForElm(triggerClassSmall, fact).then((fact, element) => injectLoadingText(fact, element));
+  waitForElm(loadingBackgroundClass).then((results) => {
+    // results[0].style.width = '50%'; // TODO: This breaks things. We need a way of not breaking other elements on the page :(
+  });
+  waitForElm(loadingLittleSpinnerClass).then((results) => {
+    results[0].style.marginLeft = '50%';
+  });
+  waitForElm(firstLoadingScreenClass, fact).then((element, fact) => injectLoadingText(element, fact));
+  waitForElm(secondLoadingScreenClass, fact).then((element, fact) => injectLoadingText(element, fact));
 });
+
+// TODO: Right now if you navigate between documents in Onshape, the loading facts only show up one time. I should make it so that they always show up
+// TODO: to do that, I think I need to make constant search for anything that looks like a loading circle, and append the facts to them
+// TODO: Make the facts cycle after period of time
+// TODO: Make the facts load in better because right now they are off to the side and ugly on the small loading circle
+// TODO: add links to the facts
+// TODO: add more facts
+// TODO: Ambitious, but maybe get the facts from a server so that they can be updated async?
+// TODO: Set up permissions so that they're not horrifyingly broad
+// TODO: check performance isn't dying because I'm doing this
