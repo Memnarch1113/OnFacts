@@ -4,18 +4,17 @@ const secondLoadingScreenClass = 'spinner-holder-working';
 const loadingBackgroundClass = 'loading-progress-background';
 const loadingLittleSpinnerClass = 'os-spinner-medium os-spinner-spinning'
 
-function waitForElm(elementClass, prevData) {
-  return new Promise(resolve => {
+function waitForElm(elementClass, functionToDo, args) {
       const selector = `.${elementClass}`
-      if (document.querySelector(selector)) {
-        // return resolve(document.querySelector(selector));
-        return resolve([document.querySelector(selector), prevData]);
+      let element = document.querySelector(selector);
+      if (element) {
+        functionToDo(element, args);
       }
 
       const observer = new MutationObserver(mutations => {
-          if (document.querySelector(selector)) {
-              // resolve(document.querySelector(selector));
-              resolve([document.querySelector(selector), prevData]);
+        let element = document.querySelector(selector);  
+        if (element) {
+              functionToDo(element, args);
               observer.disconnect();
           }
       });
@@ -24,8 +23,7 @@ function waitForElm(elementClass, prevData) {
           childList: true,
           subtree: true
       });
-  });
-}
+    }
 
 function getFact(previousResult) {
   // console.log(previousResult);
@@ -36,31 +34,28 @@ function getFact(previousResult) {
   return fact;
 }
 
-const injectLoadingText = (previousResults ) => {
-  const loadingZone = previousResults[0];
-  const fact = previousResults[1];
+function injectLoadingText(element, fact) {
   const factText = document.createElement('p');
   factText.textContent = `${fact.Fact}. - ${fact.Source}`;
   factText.style.bottom = '70px';
   // factText.style.position = 'absolute';
   factText.style.right = '50%';
   factText.style.zIndex = '1003';
-  loadingZone.appendChild(factText);
+  element.appendChild(factText);
   // console.log("wow did it")
-  return Promise.resolve();
 }
-
+const observerList = [];
 const url = chrome.runtime.getURL('./trueFacts.json');
 fetch(url).then((response) => response.json()).then((data) => getFact(data)).then((fact) => {
   console.log(fact)
-  waitForElm(loadingBackgroundClass).then((results) => {
-    // results[0].style.width = '50%'; // TODO: This breaks things. We need a way of not breaking other elements on the page :(
-  });
-  waitForElm(loadingLittleSpinnerClass).then((results) => {
-    results[0].style.marginLeft = '50%';
-  });
-  waitForElm(firstLoadingScreenClass, fact).then((element, fact) => injectLoadingText(element, fact));
-  waitForElm(secondLoadingScreenClass, fact).then((element, fact) => injectLoadingText(element, fact));
+  // waitForElm(loadingBackgroundClass).then((results) => {
+  //   // results[0].style.width = '50%'; // TODO: This breaks things. We need a way of not breaking other elements on the page :(
+  // });
+  // waitForElm(loadingLittleSpinnerClass).then((results) => {
+  //   results[0].style.marginLeft = '50%';
+  // });
+  observerList.push(waitForElm(firstLoadingScreenClass, injectLoadingText, fact));
+  observerList.push(waitForElm(secondLoadingScreenClass, injectLoadingText, fact));
 });
 
 // TODO: Right now if you navigate between documents in Onshape, the loading facts only show up one time. I should make it so that they always show up
